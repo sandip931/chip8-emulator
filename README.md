@@ -1,5 +1,5 @@
 # KU Sem 2 Project: CHIP-8 Emulator
-This repository contains our second-semester computer engineering project at Kathmandu University.
+This repository contains our second-semester Computer Science project at Kathmandu University.
 
 We are currently building a CHIP-8 emulator from scratch using object-oriented C++. The main goal of this project is to understand how low-level computer systems work internally, especially concepts like memory handling, instruction execution, registers, and the fetch-decode-execute cycle.
 
