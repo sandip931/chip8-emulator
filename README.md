@@ -38,6 +38,7 @@ Since memory is byte-addressable but CHIP-8 instructions are 16-bit, we combine 
 ```cpp id="t7zj8h"
 uint16_t opcode = (memory[pc] << 8) | memory[pc + 1];
 ```
+(opcode formation in CHIP-8) [Diagram](https://excalidraw.com/#json=4ZnqfyRMuRu5xOrAwu-56,S3TCzXFhpU_5K3hXxcuWtA)
 
 At first, bitwise operations looked confusing, especially shifting and masking, but after experimenting with them in code, the logic became easier to understand.
 
