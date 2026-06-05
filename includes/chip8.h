@@ -18,20 +18,21 @@ class Chip8{
     uint8_t sp; // stack pointer
 
     //TIMERS
-    uint8_t delay_timer;
-    uint8_t sound_timer; 
+    uint8_t delayTimer;
+    uint8_t soundTimer; 
 
-    int display[64 * 32];
-    
-    int keypad[16];
+    uint8_t display[64 * 32];
+
+    uint8_t keypad[16];
   
     bool drawFlag;
+
   public:
 
     Chip8();
-    bool load_rom(std::string path);
+    bool loadRom(std::string path);
     void cycle();
-    void update_timers();
+    void updateTimers();
 };
 
 #endif // !chip8_h
