@@ -1,4 +1,5 @@
 #include "../includes/chip8.h"
+#include <cstring>
 
 
 void Chip8::updateTimers() {
@@ -22,7 +23,12 @@ void Chip8::cycle() {
     switch (opcode & 0xF000) {
      //check opcode family and specific ops
       case 0x0000:
-        //sandip
+        if(opcode == 0x00E0){ // CLEAR SCREEN
+          std::memset(display,0,sizeof(display)); // set every px to 0 (off) which means nothing to pring in screen = cls 
+        }
+        else if (opcode ==0x00EE) { /// return from function 
+          pc = stack[--sp]; 
+        }
       break;
 
       case 0x1000:
