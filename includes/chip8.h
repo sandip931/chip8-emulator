@@ -4,29 +4,35 @@
 #include <cstdint>
 #define RAM_SIZE 4096
 
-class chip8{
-  private: 
-    // uint8_t memory[RAM_SIZE];
+class Chip8{
   public:
-    ///  ------------------- CPU
+    ///  ------------------- CPU Architecture --------
+   
+    uint8_t memory[RAM_SIZE];  // 4kb memory 
     uint8_t V[16]; /// register v0-vf
     uint16_t I; // index regester
     uint16_t pc; // program counter 
-    uint16_t stack[16];
+    uint16_t stack[16]; // stores temp mem address for jumping and subroutine 
     uint8_t sp; // stack pointer
 
-    //TIMERS
+    //------------------- TIMERS
     uint8_t delayTimer;
     uint8_t soundTimer; 
 
-    int display[64 * 32]; // display frame 
-    
-    int keypad[16];
+    uint8_t display[64 * 32]; // display frame 
+    uint8_t keypad[16];  // 0 - F 
   
     bool drawFlag;
 
+    Chip8(); // default constructor
+    bool loadRom();
+    void cycle();
 
-
+    bool getDrawFlag(); // true (for draw) else false 
+    void setDrawFlag(bool value);  
+    int  getDisplay(int index); // return position of the index -> (x,y)
+    void setKey(int key, int val); // setKey 0-F 
+    bool soundActive(); // if true beep sound activates 
 };
 
-#endif // !chip8_h
+#endif 
