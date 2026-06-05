@@ -27,6 +27,7 @@ class Chip8{
     Chip8(); // default constructor
     bool loadRom();
     void cycle();
+    void updateTimers();
 
     bool getDrawFlag(); // true (for draw) else false 
     void setDrawFlag(bool value);  
