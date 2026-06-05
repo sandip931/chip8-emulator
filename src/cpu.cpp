@@ -29,7 +29,6 @@ void Chip8::cycle() {
         else if (opcode ==0x00EE) { /// return from function 
           pc = stack[--sp]; 
         }
-        //sandip
       break;
 
       case 0x1000:
