@@ -36,4 +36,4 @@ class Chip8{
     bool soundActive(); // if true beep sound activates 
 };
 
-#endif 
+#endif
