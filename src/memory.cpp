@@ -26,3 +26,23 @@ static const uint8_t FONTSET[80] = {
 };
 
 
+// The array index matches the exact hex values of the CHIP-8 keys
+static const SDL_Keycode KEYMAP[16] = {
+    SDLK_x, // 0x0 
+    SDLK_1, // 0x1 
+    SDLK_2, // 0x2 
+    SDLK_3, // 0x3 
+    SDLK_q, // 0x4 
+    SDLK_w, // 0x5 
+    SDLK_e, // 0x6 
+    SDLK_a, // 0x7 
+    SDLK_s, // 0x8 
+    SDLK_d, // 0x9 
+    SDLK_z, // 0xA 
+    SDLK_c, // 0xB 
+    SDLK_4, // 0xC 
+    SDLK_r, // 0xD 
+    SDLK_f, // 0xE 
+    SDLK_v  // 0xF 
+};
+
