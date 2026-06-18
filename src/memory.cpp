@@ -46,3 +46,23 @@ static const SDL_Keycode KEYMAP[16] = {
     SDLK_v  // 0xF 
 };
 
+Chip8::Chip8() {
+    std::memset(memory,  0, sizeof(memory));
+    std::memset(V,       0, sizeof(V));
+    std::memset(display, 0, sizeof(display));
+    std::memset(keypad,  0, sizeof(keypad));
+    std::memset(stack,   0, sizeof(stack));
+
+    pc          = 0x200;  // starting point
+    I           = 0;
+    sp          = 0;
+    delayTimer = 0;
+    soundTimer = 0;
+    drawFlag   = false;
+
+    // Read the system font characters into the low system reserves
+    for (int i = 0; i < 80; i++) {
+        memory[i] = FONTSET[i];
+    }
+}
+
