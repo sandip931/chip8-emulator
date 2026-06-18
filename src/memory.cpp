@@ -66,3 +66,38 @@ Chip8::Chip8() {
     }
 }
 
+bool Chip8::loadRom(std::string path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cerr << "ERROR: Failed to read ROM file from disk: " << path << "\n";
+        return false;
+    }
+
+    char data_byte;
+    int  write_position = 0x200;
+    while (file.get(data_byte) && write_position < 4096) {
+        memory[write_position++] = static_cast<uint8_t>(data_byte);
+    }
+    return true;
+}
+
+bool Chip8::getDrawFlag()           { return drawFlag; }
+void Chip8::setDrawFlag(bool value) { drawFlag = value; }
+int  Chip8::getDisplay(int index)    { return display[index]; }
+void Chip8::setKey(int key, int val) { keypad[key] = val; }
+bool Chip8::soundActive()            { return soundTimer > 0; }
+
+// input handling 
+void handleInput(Chip8& chip8, SDL_Event& e) {
+    if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+        int is_pressed = (e.type == SDL_KEYDOWN) ? 1 : 0;
+        
+        // Scan the array and if it matches, update the state
+        for (int i = 0; i < 16; i++) {
+            if (e.key.keysym.sym == KEYMAP[i]) {
+                chip8.setKey(i, is_pressed);
+                break;
+            }
+        }
+    }
+}
