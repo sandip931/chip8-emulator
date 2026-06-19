@@ -1,47 +1,51 @@
 #include <iostream>
-#include <SDL2/SDL.h>
+#include "../includes/display.h"
 
-int main(int argc, char **args)
+static const int SCALE = 10;
+
+bool init_display(SDL_Window *&window, SDL_Renderer *&renderer)
 {
-    SDL_Renderer *renderer = NULL;
-    SDL_Texture *texture = NULL;
-    SDL_Window *window = NULL;
-    // checking for initilizing SDL
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
-        std::cout << "Error when initializing SDL" << SDL_GetError();
-        system("pause");
-        return 1;
+        return false;
     }
 
-    window = SDL_CreateWindow("CHIP-8 Emulator", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 320, SDL_WINDOW_SHOWN);
-
+    window = SDL_CreateWindow("CHIP-8 Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 64 * SCALE, 32 * SCALE, SDL_WINDOW_SHOWN);
     if (!window)
-    {
-        std::cout << "Error creating window" << SDL_GetError() << std::endl;
-        system("pause");
-        return 1;
-    }
+        return false;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    if (!renderer)
-    {
-        std::cout << "Error rendering" << SDL_GetError() << std::endl;
-        system("pause");
-        return 1;
-    }
-    SDL_Rect pixel = {20, 20, 100, 200};
+    return renderer != nullptr;
+}
+
+void render(SDL_Renderer *renderer, Chip8 &chip8)
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 128, 255, 255);
-    SDL_RenderFillRect(renderer, &pixel);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    for (int y = 0; y < 32; y++)
+    {
+        for (int x = 0; x < 64; x++)
+        {
+            if (chip8.getDisplay(y * 64 + x) == 1)
+            {
+                SDL_Rect block = {x * SCALE, y * SCALE, SCALE, SCALE};
+                SDL_RenderFillRect(renderer, &block);
+            }
+        }
+    }
 
     SDL_RenderPresent(renderer);
-    system("pause");
+    chip8.setDrawFlag(false);
+}
+
+void close_display(SDL_Window *window, SDL_Renderer *renderer)
+{
+
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
     SDL_Quit();
-
-    return 0;
 }
