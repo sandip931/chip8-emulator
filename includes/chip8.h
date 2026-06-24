@@ -2,6 +2,8 @@
 #define chip8_h
 
 #include <cstdint>
+#include<string>
+
 #define RAM_SIZE 4096
 
 class Chip8{
@@ -25,7 +27,7 @@ class Chip8{
     bool drawFlag;
 
     Chip8(); // default constructor
-    bool loadRom();
+    bool loadRom(std::string filePath);
     void cycle();
     void updateTimers();
 
@@ -36,4 +38,4 @@ class Chip8{
     bool soundActive(); // if true beep sound activates 
 };
 
-#endif 
+#endif

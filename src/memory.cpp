@@ -1,0 +1,103 @@
+
+#include "../includes/chip8.h"
+#include "../includes/memory.h"
+#include <fstream>
+#include <cstring>   
+#include <iostream>
+
+// 5 length 4 wide fontset for 0-F characters
+static const uint8_t FONTSET[80] = {
+    0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
+    0x20, 0x60, 0x20, 0x20, 0x70,  // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0,  // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10,  // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0,  // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0,  // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40,  // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0,  // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0,  // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90,  // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0,  // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0,  // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0,  // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80   // F
+};
+
+
+// The array index matches the exact hex values of the CHIP-8 keys
+static const SDL_Keycode KEYMAP[16] = {
+    SDLK_x, // 0x0 
+    SDLK_1, // 0x1 
+    SDLK_2, // 0x2 
+    SDLK_3, // 0x3 
+    SDLK_q, // 0x4 
+    SDLK_w, // 0x5 
+    SDLK_e, // 0x6 
+    SDLK_a, // 0x7 
+    SDLK_s, // 0x8 
+    SDLK_d, // 0x9 
+    SDLK_z, // 0xA 
+    SDLK_c, // 0xB 
+    SDLK_4, // 0xC 
+    SDLK_r, // 0xD 
+    SDLK_f, // 0xE 
+    SDLK_v  // 0xF 
+};
+
+Chip8::Chip8() {
+    std::memset(memory,  0, sizeof(memory));
+    std::memset(V,       0, sizeof(V));
+    std::memset(display, 0, sizeof(display));
+    std::memset(keypad,  0, sizeof(keypad));
+    std::memset(stack,   0, sizeof(stack));
+
+    pc          = 0x200;  // starting point
+    I           = 0;
+    sp          = 0;
+    delayTimer = 0;
+    soundTimer = 0;
+    drawFlag   = false;
+
+    // Read the system font characters into the low system reserves
+    for (int i = 0; i < 80; i++) {
+        memory[i] = FONTSET[i];
+    }
+}
+
+bool Chip8::loadRom(std::string path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cerr << "ERROR: Failed to read ROM file from disk: " << path << "\n";
+        return false;
+    }
+
+    char data_byte;
+    int  write_position = 0x200;
+    while (file.get(data_byte) && write_position < 4096) {
+        memory[write_position++] = static_cast<uint8_t>(data_byte);
+    }
+    return true;
+}
+
+bool Chip8::getDrawFlag()           { return drawFlag; }
+void Chip8::setDrawFlag(bool value) { drawFlag = value; }
+int  Chip8::getDisplay(int index)    { return display[index]; }
+void Chip8::setKey(int key, int val) { keypad[key] = val; }
+bool Chip8::soundActive()            { return soundTimer > 0; }
+
+// input handling 
+void handleInput(Chip8& chip8, SDL_Event& e) {
+    if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+        int is_pressed = (e.type == SDL_KEYDOWN) ? 1 : 0;
+        
+        // Scan the array and if it matches, update the state
+        for (int i = 0; i < 16; i++) {
+            if (e.key.keysym.sym == KEYMAP[i]) {
+                chip8.setKey(i, is_pressed);
+                break;
+            }
+        }
+    }
+}
