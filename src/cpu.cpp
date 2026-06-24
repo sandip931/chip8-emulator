@@ -1,6 +1,5 @@
 #include "../includes/chip8.h"
 #include <cstring>
-#include <iostream>
 
 void Chip8::updateTimers()
 {
@@ -24,12 +23,11 @@ void Chip8::cycle()
   // to decode:
   switch (opcode & 0xF000)
   {
-  // check opcode family and specific ops
+    // check opcode family and specific ops
   case 0x0000:
     if (opcode == 0x00E0)
     {                                           // CLEAR SCREEN
       std::memset(display, 0, sizeof(display)); // set every px to 0 (off) which means nothing to print in screen = cls
-      drawFlag = true;
     }
     else if (opcode == 0x00EE)
     { /// return from function
@@ -69,6 +67,27 @@ void Chip8::cycle()
     V[regX] += valueKK;
     break;
 
+  case 0x8000:
+    switch (opcode & 0x000F)
+    {
+    case 0x0:
+      V[regX] = V[regY];
+      V[0xF] = 0;
+      break; // 8xy0 Copy
+    case 0x1:
+      V[regX] |= V[regY];
+      V[0xF] = 0;
+      break; // 8xy1 Bitwise OR
+    case 0x2:
+      V[regX] &= V[regY];
+      V[0xF] = 0;
+      break; // 8xy2 Bitwise AND
+    case 0x3:
+      V[regX] ^= V[regY];
+      V[0xF] = 0;
+      break; // 8xy3 Bitwise XOR
+    }
+    break;
   case 0x8000:
     switch (opcode & 0x000F)
     {
@@ -151,16 +170,16 @@ void Chip8::cycle()
 
   case 0xF000:
   case 0x07:
-    V[regX] = delayTimer;
+    V[regX] = delay_timer;
     break;
   case 0x0A:
     // prashant
     break;
   case 0x15:
-    delayTimer = V[regX];
+    delay_timer = V[regX];
     break;
   case 0x18:
-    soundTimer = V[regX];
+    sound_timer = V[regX];
     break;
   case 0x1E: // prashant's from here
     break;
