@@ -88,27 +88,6 @@ void Chip8::cycle()
       break; // 8xy3 Bitwise XOR
     }
     break;
-  case 0x8000:
-    switch (opcode & 0x000F)
-    {
-    case 0x0:
-      V[regX] = V[regY];
-      V[0xF] = 0;
-      break; // 8xy0 Copy
-    case 0x1:
-      V[regX] |= V[regY];
-      V[0xF] = 0;
-      break; // 8xy1 Bitwise OR
-    case 0x2:
-      V[regX] &= V[regY];
-      V[0xF] = 0;
-      break; // 8xy2 Bitwise AND
-    case 0x3:
-      V[regX] ^= V[regY];
-      V[0xF] = 0;
-      break; // 8xy3 Bitwise XOR
-    }
-    break;
 
   case 0x9000:
     if (V[regX] != V[regY])
@@ -170,16 +149,16 @@ void Chip8::cycle()
 
   case 0xF000:
   case 0x07:
-    V[regX] = delay_timer;
+    V[regX] = delayTimer;
     break;
   case 0x0A:
     // prashant
     break;
   case 0x15:
-    delay_timer = V[regX];
+    delayTimer = V[regX];
     break;
   case 0x18:
-    sound_timer = V[regX];
+    soundTimer = V[regX];
     break;
   case 0x1E: // prashant's from here
     break;
