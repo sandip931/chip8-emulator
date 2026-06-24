@@ -1,5 +1,7 @@
 #include "../includes/chip8.h"
 #include <cstring>
+#include<iostream>
+
 
 
 void Chip8::updateTimers() {
@@ -25,7 +27,7 @@ void Chip8::cycle() {
       case 0x0000:
         if(opcode == 0x00E0){ // CLEAR SCREEN
           std::memset(display,0,sizeof(display)); // set every px to 0 (off) which means nothing to print in screen = cls 
-          draw_flag = true;
+          drawFlag = true;
         }
         else if (opcode ==0x00EE) { /// return from function 
           pc = stack[--sp]; 
@@ -59,7 +61,7 @@ void Chip8::cycle() {
         break;
 
       case 0x7000:
-        V[regX]+=valueKk;
+        V[regX]+=valueKK;
         break;
 
       case 0x8000:
@@ -145,15 +147,47 @@ void Chip8::cycle() {
         }
         break;
 
+    case 0xF000:
+        switch (valueKK) {
+        case 0x07: V[regX] = delayTimer; break; 
+        case 0x0A: {                      // Fx0A — Wait for a keyboard key block loop
+            bool anyKey = false;
+            for (int k = 0; k < 16; k++) {
+                if (keypad[k]) {
+                    V[regX] = k;
+                    anyKey = true;
+                    break;
+                }
+            }
+            if (!anyKey) pc -= 2; // Loop freeze instruction simulation
+            break;
+        }
+        case 0x15: delayTimer = V[regX]; break; 
+        case 0x18: soundTimer = V[regX]; break; 
+        case 0x1E: I += V[regX]; break;          
+        case 0x29: I = V[regX] * 5; break;       // Sets index to point to system font maps
+        case 0x33:                            // Fx33 — Binary Coded Decimal breakdown math
+            memory[I]     = V[regX] / 100;
+            memory[I + 1] = (V[regX] / 10) % 10;
+            memory[I + 2] = V[regX] % 10;
+            break;
+        case 0x55:                            // Dump internal registers to memory
+            for (int i = 0; i <= regX; i++) memory[I + i] = V[i];
+            break;
+        case 0x65:                            // Load internal registers from memory
+            for (int i = 0; i <= regX; i++) V[i] = memory[I + i];
+            break;
+        }
+        break;
 
-      case 0xF000:
-        case 0x07: V[regX] = delay_timer; break; 
-        case 0x0A:
-          //prashant
-          break;
-        case 0x15: delay_timer = V[regX]; break; 
-        case 0x18: sound_timer = V[regX]; break; 
-        case 0x1E: //prashant's from here
+    default:
+        std::cerr << "Unrecognized instruction token: " << std::hex << opcode << "\n";
         break;
     }
 }
+
+
+     
+
+
+
