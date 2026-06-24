@@ -29,7 +29,7 @@ void Chip8::cycle()
     if (opcode == 0x00E0)
     {                                           // CLEAR SCREEN
       std::memset(display, 0, sizeof(display)); // set every px to 0 (off) which means nothing to print in screen = cls
-      draw_flag = true;
+      drawFlag = true;
     }
     else if (opcode == 0x00EE)
     { /// return from function
@@ -66,7 +66,7 @@ void Chip8::cycle()
     break;
 
   case 0x7000:
-    V[regX] += valueKk;
+    V[regX] += valueKK;
     break;
 
   case 0x8000:
@@ -151,16 +151,16 @@ void Chip8::cycle()
 
   case 0xF000:
   case 0x07:
-    V[regX] = delay_timer;
+    V[regX] = delayTimer;
     break;
   case 0x0A:
     // prashant
     break;
   case 0x15:
-    delay_timer = V[regX];
+    delayTimer = V[regX];
     break;
   case 0x18:
-    sound_timer = V[regX];
+    soundTimer = V[regX];
     break;
   case 0x1E: // prashant's from here
     break;
