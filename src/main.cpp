@@ -15,23 +15,12 @@
 int main(int argc, char* argv[]){
 
   // Argument handeling and usage msg  
-  if(argc !=2){  
-    std::cerr <<RED
-      <<"[ ERROR ! ] : " 
-      <<RESET<<"Invalid number of arguments.\n"
-
-      <<YELLOW
-      <<"[ HINT ] :"
-      <<RESET<<" you may have forgotten to provide input fileName (.ch8).\n"
-
-      <<GREEN
-      <<"[ USAGE ] : \n"
-      <<RESET
-      <<"-----------------------------------\n"
-      <<"chip8  < .ch8_filePath > \n"
-      <<"OR \n./chip8 < .ch8_filePath >\n"
-      <<"-----------------------------------\n";
-
+  if(argc !=2){
+    SDL_Init(0);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+        "Usage Error",
+        "Usage: chip8 <path_to_rom>\nExample: chip8 ../roms/pong.ch8",
+        nullptr);
     return 1;
   }
 
@@ -45,6 +34,13 @@ int main(int argc, char* argv[]){
     return 1;
   }
 
+  SDL_Window* window   = nullptr;
+  SDL_Renderer* renderer = nullptr;
+
+  if (!initDisplay(window, renderer)) {
+    return 1;
+  }
+
   const int cyclesPerFrame = 8;
   const int targetFPS = 60;
   const int frameDelayMS = 1000/ targetFPS; // around 480hz
@@ -53,8 +49,44 @@ int main(int argc, char* argv[]){
 
   //// main GameLoop
   while(running){
+    Uint32 frameStart = SDL_GetTicks();
 
+    // input handeling and eventHandler
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+      if (e.type == SDL_QUIT) running = false;
+      handleInput(chip8, e); 
+    }
+
+    /// cpu core logic from cpu.h single cycle for 8 times  
+    for (int i = 0; i < cyclesPerFrame; i++) {
+      chip8.cycle();   
+    }
+    chip8.updateTimers();
+
+    // rendering only if drawflag is true 
+    if (chip8.getDrawFlag()) {
+      render(renderer, chip8); 
+    }
+
+    // beep sound on / off
+    if (chip8.soundActive()) {
+      playBeep();
+    } else {
+      stopBeep();
+    }
+
+    /// frame delay for pacing 
+    Uint32 frameTime = SDL_GetTicks() - frameStart;
+    if (frameTime <static_cast<Uint32>(frameDelayMS)) {
+      SDL_Delay(frameDelayMS - frameTime);
+    }
+
+    ///// LOG DEBUG PANNEL 
+    // chip8.systemStatus(chip8); // log  planned TO-DO 
   }
-  // chip8.systemStatus(chip8); // log  planned TO-DO last
+
+  closeDisplay(window, renderer);
+
   return 0;
 }

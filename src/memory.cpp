@@ -73,10 +73,10 @@ bool Chip8::loadRom(std::string path) {
         return false;
     }
 
-    char data_byte;
-    int  write_position = 0x200;
-    while (file.get(data_byte) && write_position < 4096) {
-        memory[write_position++] = static_cast<uint8_t>(data_byte);
+    char dataByte;
+    int  writePosition = 0x200;
+    while (file.get(dataByte) && writePosition < 4096) {
+        memory[writePosition++] = static_cast<uint8_t>(dataByte);
     }
     return true;
 }
@@ -90,12 +90,12 @@ bool Chip8::soundActive()            { return soundTimer > 0; }
 // input handling 
 void handleInput(Chip8& chip8, SDL_Event& e) {
     if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-        int is_pressed = (e.type == SDL_KEYDOWN) ? 1 : 0;
+        int isPressed = (e.type == SDL_KEYDOWN) ? 1 : 0;
         
         // Scan the array and if it matches, update the state
         for (int i = 0; i < 16; i++) {
             if (e.key.keysym.sym == KEYMAP[i]) {
-                chip8.setKey(i, is_pressed);
+                chip8.setKey(i, isPressed);
                 break;
             }
         }
