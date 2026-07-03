@@ -10,17 +10,16 @@ bool initDisplay(SDL_Window *&window, SDL_Renderer *&renderer)
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         return false;
-        return false;
     }
 
     window = SDL_CreateWindow("CHIP-8 Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 64 * SCALE, 32 * SCALE, SDL_WINDOW_SHOWN);
-    window = SDL_CreateWindow("CHIP-8 Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 64 * SCALE, 32 * SCALE, SDL_WINDOW_SHOWN);
+
     if (!window)
         return false;
-    return false;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+    if (!renderer)
+        return false;
     return renderer != nullptr;
 }
 
@@ -100,7 +99,7 @@ void playBeep()
     }
 }
 
-void stop_beep()
+void stopBeep()
 {
     if (audioDevice != 0 && audioPlaying)
     {
